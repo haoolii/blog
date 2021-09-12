@@ -4,6 +4,7 @@ import { Post } from './entities/Post';
 import { MikroORM } from "@mikro-orm/core";
 import path from "path";
 import { User } from "./entities/User";
+require('dotenv').config()
 
 export default {
     entities: [User, Post, Tag, Category],
@@ -19,3 +20,4 @@ export default {
         pattern: /^[\w-]+\d+\.[tj]s$/
     }
   } as Parameters<typeof MikroORM.init>[0];
+  

@@ -7,7 +7,8 @@
     "watch": "tsc -w",
     "dev": "nodemon dist/index.js",
     "create:migration": "mikro-orm migration:create",
-    "up:migration": "mikro-orm migration:up"
+    "up:migration": "mikro-orm migration:up",
+    "start": "yarn watch && yarn dev"
   },
   "keywords": [],
   "author": "",
@@ -25,10 +26,15 @@
     "@mikro-orm/cli": "^4.5.9",
     "@mikro-orm/core": "^4.5.9",
     "@mikro-orm/postgresql": "^4.5.9",
+    "apollo-server-express": "^3.3.0",
     "argon2": "^0.28.2",
     "class-validator": "^0.13.1",
     "cors": "^2.8.5",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "graphql": "^15.5.3",
+    "transliteration": "^2.2.0",
+    "type-graphql": "^1.1.1",
+    "uuidv4": "^6.2.12"
   },
   "mikro-orm": {
     "useTsNode": true,
