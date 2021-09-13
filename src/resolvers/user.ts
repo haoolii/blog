@@ -7,10 +7,13 @@ import {
   InputType,
   Mutation,
   ObjectType,
+  Query,
   Resolver,
+  UseMiddleware,
 } from "type-graphql";
 import argon2 from "argon2";
 import { generateToken } from "../utils/jwt";
+import { isAuth } from "../middleware/isAuth";
 
 @InputType()
 class UserRegisterInput {
@@ -39,6 +42,16 @@ class FieldError {
 }
 
 @ObjectType()
+class MeResponse {
+  @Field()
+  id: string;
+  @Field()
+  name: string;
+  @Field()
+  email: string;
+}
+
+@ObjectType()
 class UserResponse {
   @Field(() => [FieldError], { nullable: true })
   errors?: FieldError[];
@@ -52,6 +65,12 @@ class UserResponse {
 
 @Resolver()
 export class UserResolver {
+  @Query(() => MeResponse, { nullable: true })
+  @UseMiddleware(isAuth)
+  async me(@Ctx() { me }: MyContext): Promise<MeResponse> {
+    return me;
+  }
+
   @Mutation(() => UserResponse)
   async register(
     @Arg("options") options: UserRegisterInput,

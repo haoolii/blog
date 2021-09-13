@@ -8,7 +8,7 @@ import { UserResolver } from "./resolvers/user";
 import { MyContext } from "./types";
 import microConfig from "./mikro-orm.config";
 import { PostResolver } from "./resolvers/post";
-
+import { verifyToken } from "./utils/jwt";
 
 const main = async () => {
   const orm = await MikroORM.init(microConfig);
@@ -24,7 +24,16 @@ const main = async () => {
       resolvers: [UserResolver, PostResolver],
       validate: false,
     }),
-    context: ({ req, res }: MyContext) => ({ em: orm.em, req, res }),
+    context: ({ req, res }: MyContext) => {
+      const token = req.headers.authorization;
+      if (token) {
+        const me = verifyToken(token);
+        if (me) {
+          return { em: orm.em, req, res, me };
+        }
+      }
+      return { em: orm.em, req, res };
+    },
   });
 
   await apolloServer.start();
