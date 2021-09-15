@@ -67,8 +67,8 @@ class UserResponse {
 export class UserResolver {
   @Query(() => MeResponse, { nullable: true })
   @UseMiddleware(isAuth)
-  async me(@Ctx() { me }: MyContext): Promise<MeResponse> {
-    return me;
+  async me(@Ctx() { em, userId }: MyContext): Promise<MeResponse | null> {
+    return em.findOne(User, { id: userId });
   }
 
   @Mutation(() => UserResponse)
@@ -141,6 +141,6 @@ export class UserResolver {
       };
     }
 
-    return { user, token: generateToken(user) };
+    return { user, token: generateToken(user.id) };
   }
 }

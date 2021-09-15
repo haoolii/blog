@@ -27,9 +27,9 @@ const main = async () => {
     context: ({ req, res }: MyContext) => {
       const token = req.headers.authorization;
       if (token) {
-        const me = verifyToken(token);
-        if (me) {
-          return { em: orm.em, req, res, me };
+        const { userId } = verifyToken(token)!;
+        if (userId) {
+          return { em: orm.em, req, res, userId };
         }
       }
       return { em: orm.em, req, res };
