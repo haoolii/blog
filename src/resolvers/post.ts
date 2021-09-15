@@ -1,5 +1,6 @@
+import { User } from './../entities/User';
 import { Post } from "./../entities/Post";
-import { MyContext } from "./../types";
+import { MyContext, FieldError } from "./../types";
 import {
   Arg,
   Ctx,
@@ -10,9 +11,11 @@ import {
   ObjectType,
   Query,
   Resolver,
+  UseMiddleware,
 } from "type-graphql";
 import { QueryOrder } from "@mikro-orm/core";
 import { slugify } from "transliteration";
+import { isAuth } from '../middleware/isAuth';
 
 @InputType()
 class PostInput {
@@ -32,6 +35,14 @@ class PaginatedPosts {
   total: number;
 }
 
+@ObjectType()
+class DeletePost {
+  @Field(() => [FieldError], { nullable: true })
+  errors?: FieldError[];
+  @Field(() => Boolean, { nullable: true })
+  status: boolean;
+}
+
 /** Need Impl */
 @Resolver()
 export class PostResolver {
@@ -43,7 +54,7 @@ export class PostResolver {
   ): Promise<PaginatedPosts> {
     const offset = pageSize * pageIndex;
 
-    const posts = await em.find(
+    let posts = await em.find(
       Post,
       {},
       {
@@ -62,9 +73,35 @@ export class PostResolver {
   }
 
   @Mutation(() => Post)
-  async createPost(@Arg("input") input: PostInput, @Ctx() { em }: MyContext) {
-    const post = em.create(Post, { ...input, slug: slugify(input.title) });
+  @UseMiddleware(isAuth)
+  async createPost(@Arg("input") input: PostInput, @Ctx() { em, userId }: MyContext) {
+    const author = await em.findOne(User, {id: userId});
+    const post = em.create(Post, { ...input, slug: slugify(input.title), author });
     await em.persistAndFlush(post);
     return post;
+  }
+
+  @Mutation(() => DeletePost)
+  async deletePost(
+    @Arg("id") id: string,
+    @Ctx() { em }: MyContext
+  ) : Promise<DeletePost>{
+    const post = await em.findOne(Post, { id });
+    if (post) {
+      await em.removeAndFlush(post);
+      return {
+        status: true
+      }
+    } else {
+      return {
+        errors: [
+          {
+            field: 'id',
+            message: 'not exist'
+          }
+        ],
+        status: false
+      }
+    }
   }
 }

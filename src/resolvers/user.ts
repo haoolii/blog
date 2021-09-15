@@ -1,5 +1,5 @@
 import { User } from "./../entities/User";
-import { MyContext } from "./../types";
+import { MyContext, FieldError } from "./../types";
 import {
   Arg,
   Ctx,
@@ -31,14 +31,6 @@ class EmailPasswordInput {
   email: string;
   @Field()
   password: string;
-}
-
-@ObjectType()
-class FieldError {
-  @Field()
-  field: string;
-  @Field()
-  message: string;
 }
 
 @ObjectType()

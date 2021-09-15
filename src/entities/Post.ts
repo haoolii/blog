@@ -19,7 +19,7 @@ export class Post {
   @PrimaryKey()
   id: string = uuid();
 
-  @Field()
+  @Field({ nullable: true })
   @ManyToOne(() => User, { nullable: true })
   author: User;
 
