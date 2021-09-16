@@ -58,7 +58,7 @@ class DeletePost {
 /** Need Impl */
 @Resolver()
 export class PostResolver {
-  @Query(() => PaginatedPosts, { nullable: true })
+  @Query(() => PaginatedPosts)
   async posts(
     @Arg("pageIndex", () => Int) pageIndex: number,
     @Arg("pageSize", () => Int) pageSize: number,
@@ -80,7 +80,7 @@ export class PostResolver {
 
     return {
       total,
-      posts,
+      posts
     };
   }
 
