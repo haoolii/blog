@@ -5,12 +5,11 @@ import { uuid } from "uuidv4";
 @ObjectType()
 @Entity()
 export class Category {
-
   @Field(() => String)
   @PrimaryKey()
   id: string = uuid();
 
-  @Field(() => Category)
+  @Field(() => Category, { nullable: true })
   @ManyToOne(() => Category, { nullable: true })
   parent: Category;
 
@@ -22,13 +21,13 @@ export class Category {
   @Property({ type: "text", unique: true })
   slug!: string;
 
-  @Field(() => String)
-  @Property({ type: "text" })
-  metaTitle: string;
+  @Field(() => String, { nullable: true })
+  @Property({ type: "text", nullable: true })
+  metaTitle?: string;
 
-  @Field(() => String)
-  @Property({ type: "text" })
-  content: string;
+  @Field(() => String, { nullable: true })
+  @Property({ type: "text", nullable: true })
+  content?: string;
 
   @Field(() => String)
   @Property({ type: "date" })
