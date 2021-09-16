@@ -13,6 +13,6 @@ export const verifyToken = (token: string): { userId: string } | null => {
     let decoded = jwt.verify(token, signature) as { userId: string };
     return decoded;
   } catch (err) {
-    return null;
-  }
+    throw new Error("not authenticated");
+  };
 };
