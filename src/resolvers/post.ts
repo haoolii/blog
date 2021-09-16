@@ -84,27 +84,12 @@ export class PostResolver {
     };
   }
 
-  @Mutation(() => Post)
-  @UseMiddleware(isAuth)
-  async updatePost(
-    @Arg("input") input: UpdatePostInput,
-    @Ctx() { em }: MyContext
-  ): Promise<Post> {
-    const post = await em.findOne(Post, { id: input.id });
+  @Query(() => Post)
+  async post(@Arg("id", () => String) id: string, @Ctx() { em }: MyContext) {
+    const post = await em.findOne(Post, { id });
     if (!post) {
-      throw new Error("id can't found any post");
+      throw new Error("not exist");
     }
-    if (input.content) {
-      post.content = input.content;
-    }
-    if (input.title) {
-      post.title = input.title;
-      post.slug = slugify(input.title);
-    }
-    if (input.metaTitle) {
-      post.metaTitle = input.metaTitle;
-    }
-    await em.flush();
     return post;
   }
 
@@ -146,5 +131,29 @@ export class PostResolver {
         status: false,
       };
     }
+  }
+
+  @Mutation(() => Post)
+  @UseMiddleware(isAuth)
+  async updatePost(
+    @Arg("input") input: UpdatePostInput,
+    @Ctx() { em }: MyContext
+  ): Promise<Post> {
+    const post = await em.findOne(Post, { id: input.id });
+    if (!post) {
+      throw new Error("id can't found any post");
+    }
+    if (input.content) {
+      post.content = input.content;
+    }
+    if (input.title) {
+      post.title = input.title;
+      post.slug = slugify(input.title);
+    }
+    if (input.metaTitle) {
+      post.metaTitle = input.metaTitle;
+    }
+    await em.flush();
+    return post;
   }
 }
