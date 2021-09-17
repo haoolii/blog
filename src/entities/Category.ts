@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
+import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
 import { uuid } from "uuidv4";
 
@@ -8,10 +8,6 @@ export class Category {
   @Field(() => String)
   @PrimaryKey()
   id: string = uuid();
-
-  @Field(() => Category, { nullable: true })
-  @ManyToOne(() => Category, { nullable: true })
-  parent: Category;
 
   @Field(() => String)
   @Property({ type: "text" })
