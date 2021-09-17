@@ -42,7 +42,7 @@ class UpdateTagInput {
 @ObjectType()
 class PaginatedTags {
   @Field(() => [Tag])
-  tags: Tag[];
+  list: Tag[];
   @Field()
   total: number;
 }
@@ -53,7 +53,7 @@ export class TagResolver {
   @Query(() => PaginatedTags)
   async tags(
     @Arg("pageIndex", () => Int) pageIndex: number,
-    @Arg("pageIndex", () => Int) pageSize: number,
+    @Arg("pageSize", () => Int) pageSize: number,
     @Ctx() { em }: MyContext
   ): Promise<PaginatedTags> {
     const offset = pageIndex * pageSize;
@@ -72,7 +72,7 @@ export class TagResolver {
 
     return {
       total,
-      tags,
+      list: tags,
     };
   }
 
@@ -83,6 +83,19 @@ export class TagResolver {
     @Ctx() { em }: MyContext
   ): Promise<Tag> {
     const tag = await em.findOne(Tag, { id });
+    if (!tag) {
+      throw new Error("not exist");
+    }
+    return tag;
+  }
+
+  /** Get Single Tag With Slug */
+  @Query(() => Tag)
+  async tagSlug(
+    @Arg("slug", () => String) slug: string,
+    @Ctx() { em }: MyContext
+  ): Promise<Tag> {
+    const tag = await em.findOne(Tag, { slug });
     if (!tag) {
       throw new Error("not exist");
     }

@@ -1,3 +1,4 @@
+import { TagResolver } from './resolvers/tag';
 import { MikroORM } from "@mikro-orm/core";
 import { ApolloServer } from "apollo-server-express";
 import cors from "cors";
@@ -21,7 +22,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver, PostResolver],
+      resolvers: [UserResolver, PostResolver, TagResolver],
       validate: false,
     }),
     context: ({ req, res }: MyContext) => {
