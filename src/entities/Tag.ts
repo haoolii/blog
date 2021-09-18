@@ -18,7 +18,7 @@ export class Tag {
   id: string = uuid();
 
   @Field(() => String)
-  @Property({ type: "text" })
+  @Property({ type: "text", unique: true })
   title: string;
 
   @Field(() => String)
